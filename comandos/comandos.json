@@ -41,6 +41,8 @@
     ],
     "grupo":[
         "!destravar",
+        "!setranking",
+        "!setestrelas",
         "!status",
         "!fotogrupo",
         "!regras",
@@ -51,6 +53,7 @@
         "!ban",
         "!promover",
         "!rebaixar",
+        "!dinamica",
         "!mt",
         "!mm",
         "!adms",
