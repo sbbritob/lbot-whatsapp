@@ -40,6 +40,8 @@ module.exports = admin = async(client,message) => {
                 var resposta = criarTexto(msgs_texto.admin.infocompleta.resposta_superior, infoBot.criador, infoBot.nome, botInicializacaoData, version)
                 // AUTO-STICKER
                 resposta += (infoBot.autosticker) ? msgs_texto.admin.infocompleta.resposta_variavel.autosticker.on: msgs_texto.admin.infocompleta.resposta_variavel.autosticker.off
+                //AUTO-REAÇÃO
+                resposta += (infoBot.autoreacao) ? msgs_texto.admin.infocompleta.resposta_variavel.autoreacao.on: msgs_texto.admin.infocompleta.resposta_variavel.autoreacao.off
                 // PV LIBERADO
                 resposta += (infoBot.pvliberado) ? msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.on: msgs_texto.admin.infocompleta.resposta_variavel.pvliberado.off
                 // ANTI-TRAVA
@@ -185,6 +187,17 @@ module.exports = admin = async(client,message) => {
                     botAlterarAutoSticker(false)
                     await client.reply(chatId, msgs_texto.admin.autostickerpv.desativado,id)
                 } 
+                break
+            
+            case "!autoreacao":
+                var novoEstado = !infoBot().autoreacao
+                if(novoEstado){
+                    botAlterarAutoReacao(true)
+                    await ClientRequest.reply(chatId, msgs_texto.admin.autoreacaopv.ativado,id) 
+                } else {
+                    botAlterarAutoReacao(false)
+                    await ClientRequest.reply(chatId, msgs_texto.admin.autoreacao.desativado,id)
+                }
                 break
 
             case "!pvliberado":

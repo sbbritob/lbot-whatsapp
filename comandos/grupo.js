@@ -161,9 +161,24 @@ module.exports = grupo = async(client,message) => {
                     client.reply(chatId, msgs_texto.grupo.antilink.desligado, id)
                 }
                 break
+            
+            case '!autoreacao':
+                if (!isGroupAdmins) return client.reply(chatId, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(chatId,msgs_texto.permissao.bot_admin, id)
+                var grupoInfo = await db.obterGrupo(groupId)
+                var estadoNovo = !grupoInfo.autoreacao
+                if (estadoNovo) {
+                    await db.alterarAutoReacao(groupId, true)
+                    await client.reply(chatId, msgs_texto.grupo.autoreacao.ligado, id)
+                } else {
+                    await db.alterarAutoReacao(groupId, false)
+                    await client.reply(chatId, msgs_texto.grupo.autoreacao.desligado, id)
+                }
+                break
 
             case '!autosticker':
                 if (!isGroupAdmins) return client.reply(chatId, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(chatId,msgs_texto.permissao.bot_admin, id)
                 var grupoInfo = await db.obterGrupo(groupId)
                 var estadoNovo = !grupoInfo.autosticker
                 if (estadoNovo) {
@@ -198,6 +213,7 @@ module.exports = grupo = async(client,message) => {
 
             case "!mutar":
                 if (!isGroupAdmins) return client.reply(chatId, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(chatId,msgs_texto.permissao.bot_admin, id)
                 var grupoInfo = await db.obterGrupo(groupId)
                 var estadoNovo = !grupoInfo.mutar
                 if (estadoNovo) {
@@ -243,6 +259,7 @@ module.exports = grupo = async(client,message) => {
 
             case '!contador':
                 if (!isGroupAdmins) return client.reply(chatId, msgs_texto.permissao.apenas_admin , id)
+                if (!isBotGroupAdmins) return client.reply(chatId,msgs_texto.permissao.bot_admin, id)
                 var grupoInfo = await db.obterGrupo(groupId)
                 var estadoNovo = !grupoInfo.contador.status
                 var membrosAtuais = await client.getGroupMembers(groupId)
@@ -527,6 +544,19 @@ module.exports = grupo = async(client,message) => {
                 var donoGrupo = chat.groupMetadata.owner
                 if(donoGrupo) await client.sendTextWithMentions(chatId, criarTexto(msgs_texto.grupo.dono.resposta, donoGrupo))
                 else await client.sendText(chatId, msgs_texto.grupo.dono.sem_dono)
+                break
+            
+            case '!dinamica':
+                if (!isGroupAdmins) return client.reply(chatId, msgs_texto.permissao.apenas_admin, id)
+                if (!isBotGroupAdmins) return client.reply(chatId,msgs_texto.permissao.bot_admin, id)
+                var membrosGrupo = await client.getGroupMembers(groupId)
+                var usuarioTexto = body.slice(4).trim()
+                var respostaMarcar = (args.length > 1) ? criarTexto(msgs_texto.grupo.mt.resposta_titulo_variavel, usuarioTexto) : msgs_texto.grupo.mt.resposta_titulo_comum
+                for(let membro of membrosGrupo){
+                    respostaMarcar += criarTexto(msgs_texto.grupo.mt.resposta_itens, membro.id.split("@")[0])
+                }
+                respostaMarcar += `╚═〘 ${process.env.NOME_BOT.trim()}®〙`
+                await client.sendTextWithMentions(chatId, respostaMarcar)
                 break
 
             case '!mt':
